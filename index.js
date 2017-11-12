@@ -1,75 +1,54 @@
-let xhrChangeField;
-let xhrChangeOrder;
 let fieldSelector;
 let orderSelector;
-
-window.onload = function () {
-    fieldSelector = document.getElementById("field-selector");
-    orderSelector = document.getElementById("order-selector");
-
-    fieldSelector.addEventListener("change", onChangeField, false);
-    orderSelector.addEventListener("change", onChangeOrder, false);
-};
-function onChangeHandler(xhr, selector) {
-    xhr = new XMLHttpRequest();
-    xhr.open('POST', "./api/articles/readAll", true);
-    let request = {
-        "sortField" : fieldSelector.options[fieldSelector.selectedIndex].value
-    };
-    xhr.onreadystatechange = processRequestField;
-    xhr.send(JSON.stringify(request));
-}
-function onChangeField() {
-    xhrChangeField = new XMLHttpRequest();
-    xhrChangeField.open('POST', "./api/articles/readAll", true);
-    let request = {
-        "sortField" : fieldSelector.options[fieldSelector.selectedIndex].value
-    };
-    xhrChangeField.onreadystatechange = processRequestField;
-    xhrChangeField.send(JSON.stringify(request));
-}
-
-function onChangeOrder() {
-    xhrChangeOrder = new XMLHttpRequest();
-    xhrChangeOrder.open('POST', "./api/articles/readAll", true);
-    let request = {
-        "sortOrder" : orderSelector.options[orderSelector.selectedIndex].value
-    };
-    xhrChangeOrder.onreadystatechange = processRequestOrder;
-    xhrChangeOrder.send(JSON.stringify(request));
-}
 
 let xhr = new XMLHttpRequest();
 xhr.open('POST', "./api/articles/readAll", true);
 xhr.onreadystatechange = processRequest;
 xhr.send(JSON.stringify({}));
 
+window.onload = function () {
+    fieldSelector = document.getElementById("field-selector");
+    orderSelector = document.getElementById("order-selector");
+
+    fieldSelector.addEventListener("change", onChange, false);
+    orderSelector.addEventListener("change", onChange, false);
+};
+
+function onClick(emitter) {
+    xhr = new XMLHttpRequest();
+    xhr.open('POST', "./api/articles/readAll", true);
+    let request = {
+        "sortField" : fieldSelector.options[fieldSelector.selectedIndex].value,
+        "sortOrder" : orderSelector.options[orderSelector.selectedIndex].value,
+        "page" : emitter.innerHTML
+    };
+    xhr.onreadystatechange = processRequest;
+    xhr.send(JSON.stringify(request));
+}
+
+function onChange() {
+    xhr = new XMLHttpRequest();
+    xhr.open('POST', "./api/articles/readAll", true);
+    let request = {
+        "sortField" : fieldSelector.options[fieldSelector.selectedIndex].value,
+        "sortOrder" : orderSelector.options[orderSelector.selectedIndex].value
+    };
+    xhr.onreadystatechange = processRequest;
+    xhr.send(JSON.stringify(request));
+}
 
 function processRequest(e) {
     if (xhr.readyState === 4 && xhr.status === 200) {
         removeArticles();
+        removePagination();
         addArticles(xhr);
-    }
-}
-
-function processRequestField(e) {
-    if (xhrChangeField.readyState === 4 && xhrChangeField.status === 200) {
-        removeArticles();
-        addArticles(xhrChangeField);
-    }
-}
-
-function processRequestOrder(e) {
-    if (xhrChangeOrder.readyState === 4 && xhrChangeOrder.status === 200) {
-        removeArticles();
-        addArticles(xhrChangeOrder);
     }
 }
 
 function addArticles(xhr) {
     let response = JSON.parse(xhr.responseText);
     let container = document.getElementById("articles");
-    container.setAttribute("class", "card-deck");
+    container.setAttribute("class", "card-column");
 
     response.items.forEach((article) => {
         let div = document.createElement("div");
@@ -107,8 +86,32 @@ function addArticles(xhr) {
 
         container.appendChild(div);
     });
+
+    let paginationDiv = document.getElementById("pagination");
+    let ul = document.createElement("ul");
+    ul.setAttribute("class", "pagination");
+
+    for (i = 0; i < response.meta.pages; i++) {
+        let li = document.createElement("li");
+        li.setAttribute("class", "page-item");
+        if (i + 1 == response.meta.page) li.setAttribute("class", "page-item active");
+
+        let a = document.createElement("a");
+        a.setAttribute("class", "page-link");
+        a.setAttribute("href", "#");
+        a.innerHTML = i + 1;
+        a.setAttribute("onclick", "onClick(this)");
+
+        li.appendChild(a);
+        ul.appendChild(li);
+    }
+    paginationDiv.appendChild(ul);
 }
 
 function removeArticles() {
     document.getElementById("articles").innerHTML = "";
+}
+
+function removePagination() {
+    document.getElementById("pagination").innerHTML = "";
 }

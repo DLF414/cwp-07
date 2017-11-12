@@ -2,28 +2,30 @@
 <html lang="en">
 <link rel="stylesheet" href="site.css">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="./form.js"></script>
 <head>
     <meta charset="UTF-8">
     <title>New article form</title>
 </head>
 <body>
 <div class="container">
-    <form id="article-form">
+    <form id="article-form" action="/api/articles/create" method="post">
         <div class="form-group">
             <label>Article title</label>
-            <input type="text" class="form-control" id="title" placeholder="Enter article title">
+            <input type="text" class="form-control" id="title" name="title" placeholder="Enter article title">
         </div>
         <div class="form-group">
             <label>Text</label>
-            <input type="text" class="form-control" id="text" placeholder="Enter article text">
+            <input type="text" class="form-control" id="text" name="text" placeholder="Enter article text">
         </div>
         <div class="form-group">
             <label>Date</label>
-            <input type="text" class="form-control" id="date" placeholder="Enter date">
+            <input type="text" class="form-control" id="date" name="date" placeholder="Enter date">
         </div>
         <div class="form-group">
             <label>Author</label>
-            <input type="text" class="form-control" id="author" placeholder="Enter author">
+            <input type="text" class="form-control" id="author" name="author" placeholder="Enter author">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
