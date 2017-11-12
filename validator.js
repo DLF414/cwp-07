@@ -8,8 +8,8 @@ validator.isArticleValid = function (req) {
 validator.areCommentsValid = function (comments) {
     comments.forEach((value) => {
         if (!validator.isCommentValid(value))
-    return false;
-});
+            return false;
+    });
     return true;
 };
 

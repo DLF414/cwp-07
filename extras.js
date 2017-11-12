@@ -5,10 +5,10 @@ let seed = 0;
 
 extras.generateId = function () {
     return Date.now() + seed++;
-}
+};
 
 extras.saveArticles = function (data) {
-    fs.writeFile("articles.json", JSON.stringify(data), "utf8", (err) => {
+    fs.writeFile("Content/articles.json", JSON.stringify(data, null, "\t"), "utf8", (err) => {
         if (err) {
             console.error(err);
         }
@@ -17,6 +17,7 @@ extras.saveArticles = function (data) {
         }
     });
 };
+
 extras.logRequest = function (url, body, time) {
     let result = {
         "time" : time,
@@ -37,5 +38,20 @@ extras.logRequest = function (url, body, time) {
 };
 
 extras.getCurrentLogFilename = function () {
-    return "Logs/" + new Date().toISOString().slice(0,10).replace(/-/g,"") + ".txt";
+    return "Logs/" + new Date().toISOString().slice(0,10).replace(/-/g,"");
+};
+
+extras.getResponse = function (contentType, body) {
+    return {
+        "contentType" : contentType,
+        "body"        : body
+    }
+};
+
+extras.contentTypes = {
+    'html'  : 'text/html',
+    'js'    : 'text/javascript',
+    'json'  : 'application/json',
+    'css'   : 'text/css',
+    'text'  : 'text/plain'
 };

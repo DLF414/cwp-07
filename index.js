@@ -1,20 +1,27 @@
 const http = require('http');
+const extras = require('./extras');
 const hostname = '127.0.0.1';
 const port = 3000;
-const extras = require('./extras');
-const articles = require("./controller/articles");
-const comments = require("./controller/comments");
-const logs = require("./controller/logs");
+const articles = require("./Controllers/articles");
+const comments = require("./Controllers/comments");
+const home = require("./Controllers/home");
+const logs = require("./Controllers/logs");
 
 const handlers = {
-    '/api/articles/readall' : articles.readAll,
-    '/api/articles/read'   :   articles.read,
+    '/api/articles/readAll': articles.readAll,
+    '/api/articles/read'   : articles.read,
     '/api/articles/create' : articles.create,
     '/api/articles/update' : articles.update,
     '/api/articles/delete' : articles.delete,
     '/api/comments/create' : comments.create,
     '/api/comments/delete' : comments.delete,
-    '/api/logs'          : logs.send
+    '/api/logs'            : logs.send,
+    '/'                    : home.index,
+    '/index.html'          : home.index,
+    '/app.js'              : home.app,
+    '/site.css'            : home.css
+    '/form.html'           : home.form,
+    '/form.js'             : home.formjs
 };
 
 const server = http.createServer((req, res) => {
@@ -22,14 +29,28 @@ const server = http.createServer((req, res) => {
         const handler = getHandler(req.url);
         handler(req, res, payload, (err, result) => {
             if (err) {
-                res.statusCode = err.code;
-                res.setHeader('Content-Type', 'application/json');
+                res.writeHead(err.code, {'Content-Type' : 'application/json'});
                 res.end( JSON.stringify(err) );
                 return;
             }
-            res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.end( JSON.stringify(result) );
+            res.writeHead(200, {'Content-Type': result.contentType});
+            switch (result.contentType) {
+                case extras.contentTypes["json"] : {
+                    res.end( JSON.stringify(result.body, null, "\t") );
+                    break;
+                }
+                case extras.contentTypes["html"] : {
+                    res.end(result.body);
+                    break;
+                }
+                case extras.contentTypes["js"] : {
+                    res.end(result.body);
+                    break;
+                }
+                case extras.contentTypes["css"] : {
+                    res.end(result.body);
+                }
+            }
         });
     });
 });
@@ -48,16 +69,14 @@ function notFound(req, res, payload, cb) {
 
 function parseBodyJson(req, cb) {
     let body = [];
-
-    req.on('data', function(chunk) {
+    req.on('data', function (chunk) {
         body.push(chunk);
-    }).on('end', function() {
+    }).on('end', function () {
         body = Buffer.concat(body).toString();
-        extras.logRequest(req.url, body,new Date().toISOString());
-        if(body !== "")
-        {
+        extras.logRequest(req.url, body, new Date().toISOString());
+        if (body !== "") {
             params = JSON.parse(body);
-            cb(null,params);
+            cb(null, params);
         }
         else {
             cb(null, null);
