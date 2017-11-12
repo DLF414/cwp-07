@@ -1,11 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>New article form</title>
 </head>
 <body>
-
+<div class="container">
+    <form id="article-form">
+        <div class="form-group">
+            <label>Article title</label>
+            <input type="text" class="form-control" id="title" placeholder="Enter article title">
+        </div>
+        <div class="form-group">
+            <label>Text</label>
+            <input type="text" class="form-control" id="text" placeholder="Enter article text">
+        </div>
+        <div class="form-group">
+            <label>Date</label>
+            <input type="text" class="form-control" id="date" placeholder="Enter date">
+        </div>
+        <div class="form-group">
+            <label>Author</label>
+            <input type="text" class="form-control" id="author" placeholder="Enter author">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
 </body>
 </html>

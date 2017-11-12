@@ -1,14 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <link rel="stylesheet" href="site.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
 <script src="./app.js"></script>
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Articles</title>
 </head>
 <body>
-<div id="container">
-    <div id="articles" style="width:100px;height: 100px;background-color: #106a8c">
+<div class="container">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="margin-bottom: 10px">
+        <h2>Articles</h2>
+        <select class="custom-select" id="field-selector">
+            <option value="id">id</option>
+            <option value="title">Title</option>
+            <option value="text">Text</option>
+            <option value="date" selected>Date</option>
+            <option value="author">Author</option>
+        </select>
+        <select class="custom-select" id="order-selector">
+            <option value="asc">Ascending</option>
+            <option value="desc" selected>Descending</option>
+        </select>
+        <button type="button" class="btn btn-light btn-outline-dark">Add new article</button>
+
+
+    </nav>
+    <div id="articles">
 
     </div>
 </div>

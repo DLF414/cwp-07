@@ -1,85 +1,114 @@
-const http = require('http');
-const extras = require('./extras');
-const hostname = '127.0.0.1';
-const port = 3000;
-const articles = require("./Controllers/articles");
-const comments = require("./Controllers/comments");
-const home = require("./Controllers/home");
-const logs = require("./Controllers/logs");
+let xhrChangeField;
+let xhrChangeOrder;
+let fieldSelector;
+let orderSelector;
 
-const handlers = {
-    '/api/articles/readAll': articles.readAll,
-    '/api/articles/read'   : articles.read,
-    '/api/articles/create' : articles.create,
-    '/api/articles/update' : articles.update,
-    '/api/articles/delete' : articles.delete,
-    '/api/comments/create' : comments.create,
-    '/api/comments/delete' : comments.delete,
-    '/api/logs'            : logs.send,
-    '/'                    : home.index,
-    '/index.html'          : home.index,
-    '/app.js'              : home.app,
-    '/site.css'            : home.css
-    '/form.html'           : home.form,
-    '/form.js'             : home.formjs
+window.onload = function () {
+    fieldSelector = document.getElementById("field-selector");
+    orderSelector = document.getElementById("order-selector");
+
+    fieldSelector.addEventListener("change", onChangeField, false);
+    orderSelector.addEventListener("change", onChangeOrder, false);
 };
-
-const server = http.createServer((req, res) => {
-    parseBodyJson(req, (err, payload) => {
-        const handler = getHandler(req.url);
-        handler(req, res, payload, (err, result) => {
-            if (err) {
-                res.writeHead(err.code, {'Content-Type' : 'application/json'});
-                res.end( JSON.stringify(err) );
-                return;
-            }
-            res.writeHead(200, {'Content-Type': result.contentType});
-            switch (result.contentType) {
-                case extras.contentTypes["json"] : {
-                    res.end( JSON.stringify(result.body, null, "\t") );
-                    break;
-                }
-                case extras.contentTypes["html"] : {
-                    res.end(result.body);
-                    break;
-                }
-                case extras.contentTypes["js"] : {
-                    res.end(result.body);
-                    break;
-                }
-                case extras.contentTypes["css"] : {
-                    res.end(result.body);
-                }
-            }
-        });
-    });
-});
-
-server.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-});
-
-function getHandler(url) {
-    return handlers[url] || notFound;
+function onChangeHandler(xhr, selector) {
+    xhr = new XMLHttpRequest();
+    xhr.open('POST', "./api/articles/readAll", true);
+    let request = {
+        "sortField" : fieldSelector.options[fieldSelector.selectedIndex].value
+    };
+    xhr.onreadystatechange = processRequestField;
+    xhr.send(JSON.stringify(request));
+}
+function onChangeField() {
+    xhrChangeField = new XMLHttpRequest();
+    xhrChangeField.open('POST', "./api/articles/readAll", true);
+    let request = {
+        "sortField" : fieldSelector.options[fieldSelector.selectedIndex].value
+    };
+    xhrChangeField.onreadystatechange = processRequestField;
+    xhrChangeField.send(JSON.stringify(request));
 }
 
-function notFound(req, res, payload, cb) {
-    cb({ code: 404, message: 'Not found'});
+function onChangeOrder() {
+    xhrChangeOrder = new XMLHttpRequest();
+    xhrChangeOrder.open('POST', "./api/articles/readAll", true);
+    let request = {
+        "sortOrder" : orderSelector.options[orderSelector.selectedIndex].value
+    };
+    xhrChangeOrder.onreadystatechange = processRequestOrder;
+    xhrChangeOrder.send(JSON.stringify(request));
 }
 
-function parseBodyJson(req, cb) {
-    let body = [];
-    req.on('data', function (chunk) {
-        body.push(chunk);
-    }).on('end', function () {
-        body = Buffer.concat(body).toString();
-        extras.logRequest(req.url, body, new Date().toISOString());
-        if (body !== "") {
-            params = JSON.parse(body);
-            cb(null, params);
-        }
-        else {
-            cb(null, null);
-        }
+let xhr = new XMLHttpRequest();
+xhr.open('POST', "./api/articles/readAll", true);
+xhr.onreadystatechange = processRequest;
+xhr.send(JSON.stringify({}));
+
+
+function processRequest(e) {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        removeArticles();
+        addArticles(xhr);
+    }
+}
+
+function processRequestField(e) {
+    if (xhrChangeField.readyState === 4 && xhrChangeField.status === 200) {
+        removeArticles();
+        addArticles(xhrChangeField);
+    }
+}
+
+function processRequestOrder(e) {
+    if (xhrChangeOrder.readyState === 4 && xhrChangeOrder.status === 200) {
+        removeArticles();
+        addArticles(xhrChangeOrder);
+    }
+}
+
+function addArticles(xhr) {
+    let response = JSON.parse(xhr.responseText);
+    let container = document.getElementById("articles");
+    container.setAttribute("class", "card-deck");
+
+    response.items.forEach((article) => {
+        let div = document.createElement("div");
+        div.setAttribute("class", "article card text-center");
+        div.setAttribute("id", article.id);
+
+        let title = document.createElement("h3");
+        title.setAttribute("class", "article-title card-title bg-light");
+        title.appendChild(document.createTextNode(article.title));
+        div.appendChild(title);
+
+        let date = document.createElement("h6");
+        date.setAttribute("class", "article-date card-subtitle text-muted");
+        date.appendChild(document.createTextNode("Date: " + article.date));
+        div.appendChild(date);
+
+        let author = document.createElement("h6");
+        author.setAttribute("class", "article-date card-subtitle text-muted");
+        author.appendChild(document.createTextNode("Author: " + article.author));
+        div.appendChild(author);
+
+        let text = document.createElement("p");
+        text.setAttribute("class", "article-text card-body");
+        text.appendChild(document.createTextNode(article.text));
+        div.appendChild(text);
+
+        // let comments = document.createElement("div");
+        // article.comments.forEach((value) => {
+        //     let comment = document.createElement("div");
+        //     comment.setAttribute("class", "comment");
+        //     comment.appendChild(document.createTextNode(value.));
+        //
+        //    comments.appendChild(comment);
+        // });
+
+        container.appendChild(div);
     });
+}
+
+function removeArticles() {
+    document.getElementById("articles").innerHTML = "";
 }
