@@ -5,15 +5,23 @@
 .articles {
 
 }
+
 .article {
-    max-width: 350px;
-}
-
-.article-id {
-
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .article-title {
+
+}
+
+.article-date {
+
+}
+
+.article-author {
 
 }
 

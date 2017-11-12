@@ -5,6 +5,9 @@ $(document).ready(function(event) {
             type: "POST",
             url: "./api/articles/create",
             data: JSON.stringify(getFormData($("#article-form"))),
+            success : function () {
+                window.location.replace("./");
+            },
             dataType: "json",
             contentType : "application/json"
         });

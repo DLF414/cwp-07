@@ -1,8 +1,8 @@
 const validator = exports;
 
 validator.isArticleValid = function (req) {
-    return req !== null && req.title !== undefined && req.text !== undefined && req.date !== undefined
-        && req.author !== undefined && validator.areCommentsValid(req.comments);
+  return req !== null && req.title !== undefined && req.text !== undefined && req.date !== undefined
+  && req.author !== undefined && validator.areCommentsValid(req.comments);
 };
 
 validator.areCommentsValid = function (comments) {
@@ -17,5 +17,5 @@ validator.areCommentsValid = function (comments) {
 
 validator.isCommentValid = function (req) {
     return req !== null && Number.isInteger(req.articleId) && req.text !== undefined
-        && req.date !== undefined && req.author !== undefined;
+    && req.date !== undefined && req.author !== undefined;
 };

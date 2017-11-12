@@ -26,15 +26,15 @@ extras.logRequest = function (url, body, time) {
     };
     let filename = extras.getCurrentLogFilename();
     fs.appendFile(filename,
-        fs.existsSync(filename) ? "," + JSON.stringify(result, null, "\t") : "[" + JSON.stringify(result, null, "\t"),
-        (err) => {
-            if (err) {
-                console.error(err);
-            }
-            else {
-                console.log("log updated");
-            }
-        });
+                  fs.existsSync(filename) ? "," + JSON.stringify(result, null, "\t") : "[" + JSON.stringify(result, null, "\t"),
+                  (err) => {
+        if (err) {
+            console.error(err);
+        }
+        else {
+            console.log("log updated");
+        }
+    });
 };
 
 extras.getCurrentLogFilename = function () {

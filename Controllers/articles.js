@@ -6,7 +6,7 @@ const articles = exports;
 const sortFieldDefault = "date";
 const sortOrderDefault = "desc";
 const pageDefault = 1;
-const limitDefault = 10;
+const limitDefault = 5;
 const includeDepsDefault = true;
 
 articles.readAll = function (req, res, payload, cb) {
@@ -54,7 +54,7 @@ articles.readAll = function (req, res, payload, cb) {
         }),
         "meta" : {
             "page" : page,
-            "pages" : Math.round(_articles.length/limit),
+            "pages" : Math.ceil(_articles.length/limit),
             "count" : _articles.length,
             "limit" : limit
         }
